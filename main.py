@@ -61,7 +61,7 @@ if __name__ == "__main__":
         exit()
 
     if args.play:
-        play(lingo, learning_lang, mother_lang)
+        play(learning_lang, mother_lang)
         exit()
 
     print("Specify an operation")

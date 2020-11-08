@@ -1,3 +1,4 @@
+import random
 from typing import List
 
 import duolingo
@@ -25,11 +26,16 @@ def update_word_dict(old_words: List[dict], new_words: List[dict]) -> List[dict]
     combined_words = []
     for new_word in new_words:
         try:
-            old_word = next(word for word in old_words if word["word_string"] == new_word["word_string"])
+            old_word = find_word(new_word, old_words)
             combined_words.append({**old_word, **new_word})
         except StopIteration:
             combined_words.append(new_word)
     return combined_words
+
+
+# Raises `StopIteration` if no word is found
+def find_word(word: dict, words: List[dict]) -> dict:
+    return next(w for w in words if w["word_string"] == word["word_string"])
 
 
 def init_practice_counts(words: List[dict]) -> List[dict]:
@@ -47,11 +53,28 @@ def get_translations(lingo: duolingo.Duolingo, words: List[dict], learning_lang:
     return translations
 
 
-def play(lingo: duolingo.Duolingo, learning_lang: str, mother_lang: str):
+# Assumes word exists in db and that
+def inc_practice_count(word: dict):
+    words = db_load("words")
+    old_word = find_word(word, words)
+    old_word["practice_count"] += 1
+    db_save("words", words)
+
+
+def play(learning_lang: str, mother_lang: str):
     print(f"Playing with learning language {learning_lang} and mother {mother_lang}")
+    words = db_load("words")
     try:
         while True:
-            sup = input("sup? ")
-            print(f"You said {sup}")
+            word = random.choice(words)
+            word_string = word["word_string"]
+            translations = word["translations"]
+            user_translation = input(f"{word_string}: ")
+            if user_translation in translations:
+                print("CORRECT")
+                inc_practice_count(word)
+            else:
+                print(f"WRONG: Correct translations: {translations}.")
+                _ = input("Hit enter for next word.")
     except KeyboardInterrupt:
         print("Bye for now")
