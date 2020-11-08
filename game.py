@@ -64,6 +64,8 @@ def inc_practice_count(word: dict):
 def play(learning_lang: str, mother_lang: str):
     print(f"Playing with learning language {learning_lang} and mother {mother_lang}")
     words = db_load("words")
+    correct_words = []
+    failed_words = []
     try:
         while True:
             word = random.choice(words)
@@ -73,8 +75,11 @@ def play(learning_lang: str, mother_lang: str):
             if user_translation in translations:
                 print("CORRECT")
                 inc_practice_count(word)
+                correct_words.append(word)
             else:
                 print(f"WRONG: Correct translations: {translations}.")
+                failed_words.append(word)
                 _ = input("Hit enter for next word.")
     except KeyboardInterrupt:
+        print(f"Practiced {len(correct_words) + len(failed_words)} ({len(correct_words)} correct)")
         print("Bye for now")
