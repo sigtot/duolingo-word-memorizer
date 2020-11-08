@@ -40,7 +40,7 @@ if __name__ == "__main__":
         print(f"Set your learning language to {args.learning_lang}")
         learning_lang = args.learning_lang
     if mother_lang is None and args.mother_lang is None:
-        print("Please specify a mother tongue language")
+        print("Please specify your mother tongue language")
         exit(1)
     if args.mother_lang is not None:
         print(f"Set your mother tongue language to {args.mother_lang}")
@@ -57,7 +57,7 @@ if __name__ == "__main__":
         exit(1)
 
     if args.load:
-        load(lingo)
+        load(lingo, learning_lang, mother_lang)
         exit()
 
     if args.play:
